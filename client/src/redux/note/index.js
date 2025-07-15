@@ -45,7 +45,6 @@ api.interceptors.response.use(
     
     console.error(` ${status} ${url}: ${message}`);
 
-    // Handle different error scenarios
     switch (status) {
       case 401:
         console.log("Unauthorized - Please login again");
@@ -72,7 +71,6 @@ api.interceptors.response.use(
   }
 );
 
-// Create note
 export const createNote = createAsyncThunk(
   "/notes/create",
   async (noteData, { rejectWithValue }) => {
@@ -86,7 +84,6 @@ export const createNote = createAsyncThunk(
   }
 );
 
-// Get notes
 export const getNotes = createAsyncThunk(
   "notes/get",
   async (_, { rejectWithValue }) => {
@@ -101,7 +98,6 @@ export const getNotes = createAsyncThunk(
   }
 );
 
-// Update note
 export const updateNote = createAsyncThunk(
   "notes/update",
   async ({ id, noteData }, { rejectWithValue }) => {
@@ -115,7 +111,6 @@ export const updateNote = createAsyncThunk(
   }
 );
 
-// Delete note
 export const deleteNote = createAsyncThunk(
   "notes/delete",
   async (id, { rejectWithValue }) => {

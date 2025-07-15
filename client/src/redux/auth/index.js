@@ -18,7 +18,7 @@ const api = axios.create({
   },
 });
 
-// using axios interceptor request modification
+// Request interceptor - logs outgoing requests
 api.interceptors.request.use(
   (config) => {
     console.log(` ${config.method?.toUpperCase()} ${config.url}`);
@@ -34,12 +34,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     console.log(`✅ ${response.status} ${response.config.url}`);
-    
-    // Log successful responses
     if (response.data.message) {
       console.log(`${response.data.message}`);
     }
-    
     return response;
   },
   (error) => {
@@ -53,7 +50,6 @@ api.interceptors.response.use(
     switch (status) {
       case 401:
         console.log("Unauthorized - Session expired");
-        // Don't redirect immediately, let Redux handle it
         break;
         
       case 403:
@@ -82,7 +78,6 @@ api.interceptors.response.use(
   }
 );
 
-// Enhanced async thunks with better error handling
 export const registerUser = createAsyncThunk(
   "/auth/signup",
   async ({ email, username, fullName, password }, { rejectWithValue }) => {
