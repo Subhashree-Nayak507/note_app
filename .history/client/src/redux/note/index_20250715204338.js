@@ -178,7 +178,7 @@ const notesSlice = createSlice({
       })
       .addCase(updateNote.fulfilled, (state, action) => {
         state.isLoading = false;
-        console.log('Update payload:', action.payload);
+         console.log('Update payload:', action.payload);
         console.log('Current notes:', state.notes);
         const index = state.notes.findIndex(note => note.id === action.payload.id);
         if (index !== -1) {
