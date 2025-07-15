@@ -17,10 +17,10 @@ const api = axios.create({
   },
 });
 
-// using axios interceptor request modification
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
-    console.log(`📝 ${config.method?.toUpperCase()} ${config.url}`);
+    console.log(`${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => {
@@ -29,13 +29,13 @@ api.interceptors.request.use(
   }
 );
 
-// Response Interceptor - Focus on error handling and logging
+// Response interceptor
 api.interceptors.response.use(
   (response) => {
-    console.log(`✅ ${response.status} ${response.config.url}`);
+    console.log(`${response.status} ${response.config.url}`);
     
-    // Log successful responses
-    if (response.data.message) {
+    // Safely log message if it exists
+    if (response.data?.message) {
       console.log(`${response.data.message}`);
     }
     
@@ -46,33 +46,28 @@ api.interceptors.response.use(
     const url = error.config?.url;
     const message = error.response?.data?.message || error.message;
     
-    console.error(`${status} ${url}: ${message}`);
+    console.error(` ${status} ${url}: ${message}`);
 
     // Handle different error scenarios
     switch (status) {
       case 401:
-        console.log("🔐 Unauthorized - Please login again");
+        console.log("Unauthorized - Please login again");
         break;
-        
       case 403:
-        console.log("🚫 Forbidden - Insufficient permissions");
+        console.log("Forbidden - Insufficient permissions");
         break;
-        
       case 404:
-        console.log("🔍 Not Found - Note doesn't exist");
+        console.log(" Not Found - Resource doesn't exist");
         break;
-        
       case 429:
-        console.log("⏰ Too Many Requests - Rate limited");
+        console.log("Too Many Requests - Rate limited");
         break;
-        
       case 500:
-        console.log("🔥 Server Error - Please try again later");
+        console.log("Server Error - Please try again later");
         break;
-        
       default:
         if (!error.response) {
-          console.log("🌐 Network Error - Check your connection");
+          console.log("Network Error - Check your connection");
         }
     }
 
@@ -80,41 +75,42 @@ api.interceptors.response.use(
   }
 );
 
-// Enhanced async thunks with better error handling
+// Create note
 export const createNote = createAsyncThunk(
-  "/note/create",
+  "/notes/create",
   async (noteData, { rejectWithValue }) => {
     try {
-      const response = await api.post("/notes/create", noteData);
-      console.log("📝 Note created successfully");
-      return response.data.note;
+      const response = await api.post("/note/create", noteData);
+      console.log(" Note created successfully");
+      return response.data.notes;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
+// Get notes
 export const getNotes = createAsyncThunk(
-  "/note/get",
-  async (params = {}, { rejectWithValue }) => {
+  "notes/get",
+  async (_, { rejectWithValue }) => {
     try {
-      const queryParams = new URLSearchParams(params).toString();
-      const url = queryParams ? `/notes/get?${queryParams}` : "/notes/get";
-      const response = await api.get(url);
-      console.log("📋 Notes fetched successfully");
-      return response.data.note;
+      const response = await api.get("/note/get");
+      console.log("Note fetched successfully");
+      return response.data.notes;
+
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: error.message });
     }
   }
 );
 
+// Update note
 export const updateNote = createAsyncThunk(
-  "/note/update/:id",
+  "notes/update",
   async ({ id, noteData }, { rejectWithValue }) => {
     try {
-      const response = await api.post(`/notes/update/${id}`, noteData);
-      console.log("✏️ Note updated successfully");
+      const response = await api.post(`/note/update/${id}`, noteData);
+      console.log(" Note updated successfully");
       return response.data.note;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: error.message });
@@ -122,11 +118,12 @@ export const updateNote = createAsyncThunk(
   }
 );
 
+// Delete note
 export const deleteNote = createAsyncThunk(
-  "/note/delete/:id",
+  "notes/delete",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await api.delete(`/notes/delete/${id}`);
+      const response = await api.delete(`/note/delete/${id}`);
       console.log(" Note deleted successfully");
       return { id, message: response.data.message };
     } catch (error) {
@@ -142,10 +139,13 @@ const notesSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    clearNotes: (state) => {
+      state.notes = [];
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Create note cases
+      // Create note
       .addCase(createNote.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -159,14 +159,14 @@ const notesSlice = createSlice({
         state.error = action.payload;
       })
       
-      // Get notes cases
+      // Get notes
       .addCase(getNotes.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(getNotes.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.notes = action.payload.notes || action.payload;
+        state.notes = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(getNotes.rejected, (state, action) => {
         state.isLoading = false;
@@ -174,7 +174,7 @@ const notesSlice = createSlice({
         state.notes = [];
       })
       
-      // Update note cases
+      // Update note
       .addCase(updateNote.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -191,7 +191,7 @@ const notesSlice = createSlice({
         state.error = action.payload;
       })
       
-      // Delete note cases
+      // Delete note
       .addCase(deleteNote.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -203,12 +203,9 @@ const notesSlice = createSlice({
       .addCase(deleteNote.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-      })
+      });
   },
 });
 
-export const { 
-  clearError
-} = notesSlice.actions;
-
+export const { clearError, clearNotes } = notesSlice.actions;
 export default notesSlice.reducer;

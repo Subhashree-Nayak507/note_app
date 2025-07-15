@@ -1,12 +1,10 @@
-// controllers/notes.controller.js
 import { createNote,  deleteNoteManager,  getUserNotes, updateNoteManager } from '../managers/note.manager.js';
-import Note from '../models/note.model.js';
 
 export const createNoteController = async (req, res, next) => {
   try {
     const { title, description } = req.body;
 
-    const notes = await createNote(title, description, req.note._id);
+    const notes = await createNote(title, description, req.user._id);
 
     res.status(201).json({
         message:"Note created successfully",
@@ -25,7 +23,7 @@ export const createNoteController = async (req, res, next) => {
 
 export const getNotes = async (req, res, next) => {
   try {
-     const userId = req.note._id; 
+     const userId = req.user._id; 
      const notes = await getUserNotes(userId);
        res.status(200).json({
         message:"Note  fetched successfully",
@@ -82,7 +80,7 @@ export const updateNoteController = async (req, res, next) => {
 export const deleteNoteController = async (req, res, next) => {
   try {
     const noteId = req.params.id;
-    const userId = req.note._id;
+    const userId = req.user._id;
 
     if (!noteId) {
       return res.status(400).json({

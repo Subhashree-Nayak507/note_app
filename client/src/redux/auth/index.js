@@ -57,24 +57,24 @@ api.interceptors.response.use(
         break;
         
       case 403:
-        console.log("🚫 Forbidden - Insufficient permissions");
+        console.log("Forbidden - Insufficient permissions");
         break;
         
       case 404:
-        console.log("🔍 Not Found - Resource doesn't exist");
+        console.log("Not Found - Resource doesn't exist");
         break;
         
       case 429:
-        console.log("⏰ Too Many Requests - Rate limited");
+        console.log("Too Many Requests - Rate limited");
         break;
         
       case 500:
-        console.log("🔥 Server Error - Please try again later");
+        console.log("Server Error - Please try again later");
         break;
         
       default:
         if (!error.response) {
-          console.log("🌐 Network Error - Check your connection");
+          console.log("Network Error - Check your connection");
         }
     }
 
