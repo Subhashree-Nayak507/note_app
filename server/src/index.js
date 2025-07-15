@@ -5,11 +5,14 @@ import cors from "cors";
 import { db } from './db/db.js';
 import authRouter from './routes/auth.routes.js';
 import noteRouter from './routes/note.routes.js';
+import path from 'path';
 
 const port = process.env.PORT || 4000;
 const app = express();
 
 dotenv.config();
+
+const __dirname = path.resolve();
 
 app.use(cors({
     origin:"http://localhost:5173",
@@ -24,6 +27,15 @@ app.use(cookieParser());
 
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/note',noteRouter);
+
+
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static(path.join(__dirname, "/client/dist")));
+
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
+	});
+}
 
 app.listen(port, () => {
     db();
