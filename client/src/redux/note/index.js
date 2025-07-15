@@ -180,7 +180,7 @@ const notesSlice = createSlice({
         state.isLoading = false;
          console.log('Update payload:', action.payload);
         console.log('Current notes:', state.notes);
-        const index = state.notes.findIndex(note => note._id === action.payload._id);
+        const index = state.notes.findIndex(note => note.id === action.payload.id);
         if (index !== -1) {
           state.notes[index] = action.payload;
         }
