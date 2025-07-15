@@ -1,5 +1,4 @@
 import Note from '../models/note.model.js';
-import mongoose from 'mongoose';
 
 export const createNote = async (title, description, userId) => {
 
@@ -20,56 +19,58 @@ export const getUserNotes = async (userId) => {
   return await Note.find({ user: userId });
 };
 
-export const updateNoteManager = async (noteId, userId, updateData) => {
-  const updateFields = {};
-  
-  if ('title' in updateData) updateFields.title = updateData.title;
-  if ('description' in updateData) updateFields.description = updateData.description;
-  
-  console.log('noteId:', noteId, 'type:', typeof noteId);
-  console.log('userId:', userId, 'type:', typeof userId);
-  console.log('updateFields:', updateFields);
-  
-  const updatedNote = await Note.findOneAndUpdate(
-    { _id: noteId, user: userId },
-    updateFields,
-    { new: true, runValidators: true }
-  );
-  
-  if (!updatedNote) {
-    throw new Error('Note not found or unauthorized');
-  }
-  
-  return updatedNote;
-}
-
 export const deleteNoteManager = async (noteId, userId) => {
-  try {
-    // Validate and convert IDs
-    const safeNoteId = toSafeObjectId(noteId);
-    const safeUserId = toSafeObjectId(userId);
+    if (!noteId) {
+      throw new Error("Note ID is required");
+    };
+    if (!userId) {
+      throw new Error("User ID is required");
+    };
 
-    // Check existence and ownership
-    const note = await Note.findOne({
-      _id: safeNoteId,
-      user: safeUserId
-    });
-
+    const note = await Note.findById(noteId); 
     if (!note) {
-      throw new Error('Note not found or access denied');
+     throw new Error("Note is not found.")
     }
 
-    // Perform deletion
-    const result = await Note.deleteOne({ _id: safeNoteId });
-    
-    if (result.deletedCount === 0) {
-      throw new Error('Deletion failed - document not found');
+    if (note.user.toString() !== userId.toString()) {
+      throw new Error("You are not authorized to delete this note");
     }
+    await Note.findByIdAndDelete(noteId);
 
-    return note; // Return the found note before deletion
+    return {
+      success: true,
+      message: "Note deleted successfully"
+    };
 
-  } catch (error) {
-    console.error('Manager error:', error);
-    throw error;
-  }
 };
+
+export const updateNoteManager = async (noteId, userId, updateData) => {
+  if (!noteId) {
+    throw new Error("Note ID is required");
+  }
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+  if (!updateData ) {
+    throw new Error("At least one field (title or description) must be provided");
+  }
+
+  let note = await Note.findById(noteId);
+  if (!note) {
+     throw new Error("Note not found");
+  }
+  if (note.user.toString() !== userId.toString()) {
+    throw new Error("You are not authorized to update this note");
+
+  }
+
+  if ('title' in updateData) note.title = updateData.title;
+  if ('description' in updateData) note.description = updateData.description;
+
+  note = await note.save();
+  return {
+    success: true,
+    message: "Note updated successfully",
+    note
+  };
+}
