@@ -17,7 +17,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor
 api.interceptors.request.use(
   (config) => {
     console.log(`${config.method?.toUpperCase()} ${config.url}`);
@@ -29,12 +28,10 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor
 api.interceptors.response.use(
   (response) => {
     console.log(`${response.status} ${response.config.url}`);
     
-    // Safely log message if it exists
     if (response.data?.message) {
       console.log(`${response.data.message}`);
     }
@@ -181,6 +178,8 @@ const notesSlice = createSlice({
       })
       .addCase(updateNote.fulfilled, (state, action) => {
         state.isLoading = false;
+         console.log('Update payload:', action.payload);
+        console.log('Current notes:', state.notes);
         const index = state.notes.findIndex(note => note._id === action.payload._id);
         if (index !== -1) {
           state.notes[index] = action.payload;
@@ -198,7 +197,7 @@ const notesSlice = createSlice({
       })
       .addCase(deleteNote.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.notes = state.notes.filter(note => note._id !== action.payload.id);
+        state.notes = state.notes.filter(note => note.id !== action.payload.id);
       })
       .addCase(deleteNote.rejected, (state, action) => {
         state.isLoading = false;

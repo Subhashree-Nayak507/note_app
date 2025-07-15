@@ -27,6 +27,7 @@ const LoginPage = () => {
       toast.error(err.message || "Something went wrong!");
     }
   };
+  
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -51,9 +52,7 @@ const LoginPage = () => {
             <p className="text-sm sm:text-base text-blue-200">Log in to your account</p>
           </div>
 
-          {/* Form */}
           <div className="space-y-4 sm:space-y-6">
-            {/* Username Field */}
             <div className="relative">
               <label htmlFor="username" className="block text-xs sm:text-sm font-medium text-blue-200 mb-2">
                 Username
@@ -80,7 +79,6 @@ const LoginPage = () => {
               )}
             </div>
 
-            {/* Password Field */}
             <div className="relative">
               <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-blue-200 mb-2">
                 Password
@@ -118,7 +116,6 @@ const LoginPage = () => {
               )}
             </div>
 
-            {/* Submit Button */}
             <button
               type="button"
               onClick={handleSubmit}
@@ -143,7 +140,6 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {/* Footer */}
           <div className="text-center mt-4 sm:mt-6">
             <p className="text-xs sm:text-sm text-blue-200">
               <Link to ='/signup'>

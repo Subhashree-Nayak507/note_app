@@ -36,16 +36,13 @@ const SignupPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center px-4 py-6 sm:px-6 lg:px-8">
-      {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-20 -right-20 sm:-top-40 sm:-right-40 w-40 h-40 sm:w-80 sm:h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
         <div className="absolute -bottom-20 -left-20 sm:-bottom-40 sm:-left-40 w-40 h-40 sm:w-80 sm:h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
       </div>
 
       <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg">
-        {/* Glass card */}
         <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10">
-          {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
               <User className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
@@ -54,9 +51,7 @@ const SignupPage = () => {
             <p className="text-sm sm:text-base text-blue-200">Join us and start your journey</p>
           </div>
 
-          {/* Form */}
           <div className="space-y-4 sm:space-y-6">
-            {/* Username Field */}
             <div className="relative">
               <label htmlFor="username" className="block text-xs sm:text-sm font-medium text-blue-200 mb-2">
                 Username
@@ -82,7 +77,6 @@ const SignupPage = () => {
               )}
             </div>
 
-            {/* Email Field */}
             <div className="relative">
               <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-blue-200 mb-2">
                 Email Address
@@ -108,7 +102,6 @@ const SignupPage = () => {
               )}
             </div>
 
-            {/* Password Field */}
             <div className="relative">
               <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-blue-200 mb-2">
                 Password
@@ -145,7 +138,6 @@ const SignupPage = () => {
               )}
             </div>
 
-            {/* Submit Button */}
             <button
               type="button"
               onClick={handleSubmit}
@@ -169,8 +161,7 @@ const SignupPage = () => {
               )}
             </button>
           </div>
-
-          {/* Footer */}
+          
           <div className="text-center mt-4 sm:mt-6">
             <p className="text-xs sm:text-sm text-blue-200">
               <Link to="/login">

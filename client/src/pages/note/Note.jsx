@@ -6,27 +6,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import toast from "react-hot-toast";
 import { createNote, getNotes, updateNote, deleteNote, clearError } from '../../redux/note/index';
-import { logoutUser } from '../../redux/auth/index'; // Import logout action
+import { logoutUser } from '../../redux/auth/index'; 
 
 const Note = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { notes, isLoading, error } = useSelector((state) => state.notes);
-  const { user } = useSelector((state) => state.auth); // Get user info
-
-  console.log("notes", notes);
-  
+  const { user } = useSelector((state) => state.auth); 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const [newNote, setNewNote] = useState({ title: '', description: '' });
+  
+  console.log("notes", notes);
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         await dispatch(getNotes()).unwrap();
       } catch (error) {
-        console.error('Failed to load notes:', error);
-        toast.error(error?.message || 'Failed to load notes');
+        console.error('Failed to fetch notes:', error);
+        toast.error(error?.message || 'Failed to fetch notes');
       }
     };
     fetchNotes();
@@ -39,7 +38,6 @@ const Note = () => {
     }
   }, [error, dispatch]);
 
-  // Add a new note
   const handleAddNote = async () => {
     if (!newNote.title.trim() || !newNote.description.trim()) {
       toast.error('Please fill in both title and description');
@@ -60,14 +58,12 @@ const Note = () => {
     }
   };
 
-  // Edit a note
   const handleEditNote = async (id, updatedNote) => {
     try {
       await dispatch(updateNote({
         id,
         noteData: updatedNote
       })).unwrap();
-
       setEditingNote(null);
       toast.success('Note updated successfully!');
     } catch (error) {
@@ -76,7 +72,6 @@ const Note = () => {
     }
   };
 
-  // Delete a note
   const handleDeleteNote = async (id) => {
     try {
       await dispatch(deleteNote(id)).unwrap();
@@ -87,7 +82,6 @@ const Note = () => {
     }
   };
 
-  // Logout function
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
@@ -101,16 +95,13 @@ const Note = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 px-4 py-6 sm:px-6 lg:px-8">
-      {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-20 -right-20 sm:-top-40 sm:-right-40 w-40 h-40 sm:w-80 sm:h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
         <div className="absolute -bottom-20 -left-20 sm:-bottom-40 sm:-left-40 w-40 h-40 sm:w-80 sm:h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
       </div>
 
       <div className="relative max-w-6xl mx-auto">
-        {/* Header Card */}
         <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 mb-6 sm:mb-8">
-          {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
               <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
@@ -118,9 +109,7 @@ const Note = () => {
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">My Notes</h1>
             <p className="text-sm sm:text-base text-blue-200">Capture your thoughts and ideas</p>
             
-            {/* User Info and Logout */}
             <div className="flex items-center justify-center gap-4 mt-4">
-             
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-300 hover:text-red-200 rounded-lg font-medium transition-all duration-200 text-sm"
@@ -131,7 +120,6 @@ const Note = () => {
             </div>
           </div>
 
-          {/* Add Note Button */}
           <button
             onClick={() => setShowAddForm(true)}
             disabled={isLoading}
@@ -141,7 +129,6 @@ const Note = () => {
             Add New Note
           </button>
 
-          {/* Add Note Form */}
           {showAddForm && (
             <div className="mt-6 p-4 sm:p-6 backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl">
               <h3 className="text-lg sm:text-xl font-semibold text-white mb-4">Add New Note</h3>
@@ -187,7 +174,6 @@ const Note = () => {
           )}
         </div>
 
-        {/* Loading State */}
         {isLoading && (
           <div className="text-center py-8">
             <div className="inline-block backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-xl px-6 py-4">
@@ -197,7 +183,6 @@ const Note = () => {
           </div>
         )}
 
-        {/* Notes Grid */}
         {!isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {notes.length === 0 ? (
@@ -211,7 +196,7 @@ const Note = () => {
               </div>
             ) : (
               notes.map((note) => (
-                <div key={note._id}>
+                <div key={note.id}>
                   {editingNote === note.id ? (
                     <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-xl p-6">
                       <EditNoteForm
@@ -233,7 +218,6 @@ const Note = () => {
           </div>
         )}
 
-        {/* Footer */}
         {!isLoading && notes.length > 0 && (
           <div className="mt-8 text-center">
             <div className="inline-block backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-xl px-6 py-3">
